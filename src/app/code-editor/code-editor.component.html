@@ -1,0 +1,23 @@
+<div class="editor-page">
+
+  <!-- HEADER -->
+  <div class="editor-header">
+    <span class="title">⚡ Online .NET Code Editor</span>
+    <button class="run-btn" (click)="runCode()">▶ Run</button>
+  </div>
+
+  <!-- EDITOR -->
+  <div class="editor-container">
+    <div id="monaco-container" style="height:400px;"></div>
+  </div>
+  <div class="input-container">
+    <label>Input for Console.ReadLine():</label>
+    <input [(ngModel)]="userInput" placeholder="Enter input for your code" />
+  </div>
+  <!-- OUTPUT -->
+  <div class="output-container">
+    <h4>Output</h4>
+    <pre>{{ output }}</pre>
+  </div>
+
+</div>

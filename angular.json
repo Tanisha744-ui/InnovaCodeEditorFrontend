@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "25718db6-4d3a-470b-8a00-06e1d4308af9"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -19,9 +20,12 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/favicon.ico",
+              "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "node_modules/monaco-editor/min",
+                "output": "assets/monaco-editor/min"
               }
             ],
             "styles": [
