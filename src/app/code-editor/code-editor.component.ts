@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { CodeExecutionService } from '../Service/code-execution.service';
 import { timeout } from 'rxjs/operators';
+import { ChangeDetectorRef, NgZone } from '@angular/core';
+
 
 declare const monaco: any;
 
@@ -35,13 +37,19 @@ class Program
     fontSize: 14,
     minimap: { enabled: false },
   };
+  editor: any;
 
   constructor(
     private codeExecutionService: CodeExecutionService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cd: ChangeDetectorRef,
+    private zone:NgZone
   ) {}
 
   runCode() {
+    if(this.editor){
+      this.code = this.editor.getValue();
+    }
     this.http.post<any>('http://localhost:5143/api/CodeExecution/execute', {
       code: this.code,
       input: this.userInput
@@ -49,10 +57,16 @@ class Program
     .pipe(timeout(10000))
     .subscribe({
       next: res => {
+        this.zone.run(() => {
         this.output = res.output;
+        this.cd.detectChanges();
+      });
       },
       error: err => {
+        this.zone.run(() => {
         this.output = err.error?.message || 'Execution failed or timed out';
+        this.cd.detectChanges();
+      });
       }
     });
   }
@@ -61,15 +75,15 @@ class Program
     const onGotAmdLoader = () => {
       (window as any).require.config({ paths: { 'vs': 'assets/monaco-editor/min/vs' } });
       (window as any).require(['vs/editor/editor.main'], () => {
-        const editor = monaco.editor.create(document.getElementById('monaco-container'), {
+        this.editor = monaco.editor.create(document.getElementById('monaco-container'), {
           value: this.code, // Use the component's code property
           language: 'csharp',
           theme: 'vs-dark'
         });
 
         // Update this.code whenever the editor content changes
-        editor.onDidChangeModelContent(() => {
-          this.code = editor.getValue();
+        this.editor.onDidChangeModelContent(() => {
+          this.code = this.editor.getValue();
         });
       });
     };

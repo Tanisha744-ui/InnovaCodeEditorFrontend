@@ -36,13 +36,13 @@
 }
 
 .monaco-editor {
-  height: 80%;
+  height: 50%;
   background-color: red;
 }
 
 /* Output */
 .output-container {
-  height: 180px;
+  height:100px;
   background: #111;
   border-top: 1px solid #333;
   padding: 10px;
