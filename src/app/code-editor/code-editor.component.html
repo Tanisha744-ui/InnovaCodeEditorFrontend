@@ -1,23 +1,30 @@
 <div class="editor-page">
 
-  <!-- HEADER -->
   <div class="editor-header">
     <span class="title">⚡ Online .NET Code Editor</span>
     <button class="run-btn" (click)="runCode()">▶ Run</button>
   </div>
 
-  <!-- EDITOR -->
-  <div class="editor-container">
-    <div id="monaco-container" style="height:400px;"></div>
-  </div>
-  <div class="input-container">
-    <label>Input for Console.ReadLine():</label>
-    <input [(ngModel)]="userInput" placeholder="Enter input for your code" />
-  </div>
-  <!-- OUTPUT -->
-  <div class="output-container">
-    <h4>Output</h4>
-    <pre>{{ output }}</pre>
-  </div>
+  <div class="editor-main">
+    <div class="editor-container" [style.height.px]="editorHeight">
+      <div id="monaco-container"></div>
+    </div>
 
+    <div class="resizer"
+     (mousedown)="maybeStartResizing($event)"
+     (dblclick)="enableResizing()"></div>
+
+    <div class="output-container" [style.height.px]="outputHeight">
+      <div class="output-header">Console Output</div>
+
+      <div class="input-container">
+        <label>Input:</label>
+        <input
+          [(ngModel)]="userInput"
+          placeholder="Enter input for Console.ReadLine()" />
+      </div>
+
+      <pre class="output">{{ output }}</pre>
+    </div>
+  </div>
 </div>
