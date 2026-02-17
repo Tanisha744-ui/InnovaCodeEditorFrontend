@@ -3,12 +3,12 @@ import { Injectable } from "@angular/core";
 
 @Injectable({ providedIn: 'root' })
 export class CodeExecutionService {
-  private apiUrl = 'https://localhost:5143/api/CodeExecution/execute';
+  private apiUrl = 'http://localhost:5143/api/CodeExecution/execute';
   constructor(private http: HttpClient) {}
-  executeCode(code: string) {
+  executeCode(files: { fileName: string, code: string }[], input: string) {
     return this.http.post<{ output: string }>(
       this.apiUrl,
-      { code },
+      { files, input },
       { headers: { 'Content-Type': 'application/json' } }
     );
   }

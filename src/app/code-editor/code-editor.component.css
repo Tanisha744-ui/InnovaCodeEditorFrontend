@@ -1,3 +1,265 @@
+body.light-mode {
+  background: #f3f4f6 !important;
+  color: #222 !important;
+}
+.light-mode .editor-page {
+  background: #f3f4f6;
+  color: #222;
+}
+.light-mode .editor-header, .light-mode .navbar {
+  background: linear-gradient(90deg, #e5e7eb, #f3f4f6) !important;
+  border-bottom: 1px solid #d1d5db !important;
+  color: #222 !important;
+}
+.light-mode .title {
+  color: #222;
+}
+.light-mode .run-btn {
+  background: #2563eb;
+  color: #fff;
+}
+.light-mode .run-btn:hover {
+  background: #1d4ed8;
+}
+.light-mode .file-tabs {
+  background: #e5e7eb;
+  border-bottom: 1px solid #d1d5db;
+}
+.light-mode .file-tab {
+  background: #e5e7eb;
+  color: #222;
+}
+.light-mode .file-tab.active {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  border-bottom: 2px solid #fff;
+}
+.light-mode .add-file-btn {
+  background: #e5e7eb;
+  color: #2563eb;
+}
+.light-mode .add-file-btn:hover {
+  background: #fff;
+}
+.light-mode .close-btn {
+  color: #dc2626;
+}
+.light-mode .close-btn:hover {
+  color: #f87171;
+}
+.light-mode .file-rename-input {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+.light-mode .editor-container {
+  background: #fff;
+}
+.light-mode #monaco-container {
+  background: #fff;
+}
+.light-mode .resizer {
+  background: #d1d5db;
+}
+.light-mode .output-container {
+  background: #f3f4f6 !important;
+  border-top: 1px solid #d1d5db !important;
+  color: #222 !important;
+}
+.light-mode .output-header {
+  background: #e5e7eb !important;
+  border-bottom: 1px solid #d1d5db !important;
+  color: #222 !important;
+}
+.light-mode .input-container label {
+  color: #222;
+}
+.light-mode .output {
+  color: #222;
+  background: #fff;
+  border: 1px solid #d1d5db;
+}
+.mode-btn {
+  background: #222;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  margin-right: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.light-mode .mode-btn {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+/* Light mode global styles */
+.light-mode .editor-page {
+  background: #f3f4f6;
+  color: #222;
+}
+.light-mode .editor-header {
+  background: linear-gradient(90deg, #e5e7eb, #f3f4f6);
+  border-bottom: 1px solid #d1d5db;
+}
+.light-mode .title {
+  color: #222;
+}
+.light-mode .run-btn {
+  background: #2563eb;
+  color: #fff;
+}
+.light-mode .run-btn:hover {
+  background: #1d4ed8;
+}
+.light-mode .file-tabs {
+  background: #e5e7eb;
+  border-bottom: 1px solid #d1d5db;
+}
+.light-mode .file-tab {
+  background: #e5e7eb;
+  color: #222;
+}
+.light-mode .file-tab.active {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  border-bottom: 2px solid #fff;
+}
+.light-mode .add-file-btn {
+  background: #e5e7eb;
+  color: #2563eb;
+}
+.light-mode .add-file-btn:hover {
+  background: #fff;
+}
+.light-mode .close-btn {
+  color: #dc2626;
+}
+.light-mode .close-btn:hover {
+  color: #f87171;
+}
+.light-mode .file-rename-input {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+.light-mode .editor-container {
+  background: #fff;
+}
+.light-mode #monaco-container {
+  background: #fff;
+}
+.light-mode .resizer {
+  background: #d1d5db;
+}
+.light-mode .output-container {
+  background: #f3f4f6;
+  border-top: 1px solid #d1d5db;
+}
+.light-mode .output-header {
+  background: #e5e7eb;
+  border-bottom: 1px solid #d1d5db;
+  color: #222;
+}
+.light-mode .input-container label {
+  color: #222;
+}
+.light-mode .output {
+  color: #222;
+  background: #fff;
+}
+.mode-btn {
+  background: #222;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  margin-right: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.light-mode .mode-btn {
+  background: #fff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+/* File rename input */
+.file-rename-input {
+  width: 110px;
+  font-size: 13px;
+  border: 1px solid #22c55e;
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: #18181b;
+  color: #22c55e;
+  outline: none;
+  margin-right: 4px;
+}
+/* FILE TABS */
+.file-tabs {
+  display: flex;
+  align-items: center;
+  background: #23272f;
+  border-bottom: 1px solid #222;
+  padding: 0 8px;
+  height: 36px;
+  user-select: none;
+}
+.file-tab {
+  padding: 6px 16px 6px 10px;
+  margin-right: 4px;
+  background: #23272f;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  color: #e5e7eb;
+  position: relative;
+  font-size: 13px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  transition: background 0.15s, color 0.15s;
+}
+.file-tab.active {
+  background: #18181b;
+  color: #22c55e;
+  border: 1px solid #22c55e;
+  border-bottom: 2px solid #18181b;
+  z-index: 2;
+}
+.add-file-btn {
+  background: #23272f;
+  color: #22c55e;
+  border: none;
+  font-size: 18px;
+  margin-left: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 8px;
+  height: 28px;
+  line-height: 28px;
+  transition: background 0.15s;
+}
+.add-file-btn:hover {
+  background: #18181b;
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #e11d48;
+  font-size: 14px;
+  margin-left: 6px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  position: absolute;
+  right: 2px;
+  top: 4px;
+}
+.close-btn:hover {
+  color: #f87171;
+}
 /* GLOBAL */
 * {
   box-sizing: border-box;
@@ -23,6 +285,11 @@
   border-bottom: 1px solid #1f2937;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .title {
   font-size: 15px;
   font-weight: 600;

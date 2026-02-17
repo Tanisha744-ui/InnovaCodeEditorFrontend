@@ -2,10 +2,25 @@
 
   <div class="editor-header">
     <span class="title">⚡ Online .NET Code Editor</span>
-    <button class="run-btn" (click)="runCode()">▶ Run</button>
+    <div class ="header-buttons">
+      <button class="mode-btn" (click)="toggleMode()">{{ isDarkMode ? '🌙 Dark' : '☀️ Light' }}</button>
+      <button class="run-btn" (click)="runCode()">▶ Run</button>
+    </div>
   </div>
 
   <div class="editor-main">
+    <div class="file-tabs">
+      <ng-container *ngFor="let file of files; let i = index">
+        <span class="file-tab" [class.active]="i === selectedFileIndex" (click)="selectFile(i)">
+          <ng-container *ngIf="i === selectedFileIndex; else fileNameDisplay">
+            <input class="file-rename-input" [(ngModel)]="file.fileName" (click)="$event.stopPropagation()" />
+          </ng-container>
+          <ng-template #fileNameDisplay>{{ file.fileName }}</ng-template>
+          <button *ngIf="files.length > 1" class="close-btn" (click)="removeFile(i); $event.stopPropagation();">×</button>
+        </span>
+      </ng-container>
+      <button class="add-file-btn" (click)="addFile()">＋</button>
+    </div>
     <div class="editor-container" [style.height.px]="editorHeight">
       <div id="monaco-container"></div>
     </div>

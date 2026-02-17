@@ -17,20 +17,54 @@ declare const monaco: any;
   styleUrls: ['./code-editor.component.css']
 })
 export class CodeEditorComponent implements AfterViewInit {
+      public isDarkMode = true;
+      toggleMode(): void {
+        this.isDarkMode = !this.isDarkMode;
+        const theme = this.isDarkMode ? 'vs-dark' : 'vs-light';
+        if (this.editor) {
+          monaco.editor.setTheme(theme);
+        }
+        // Change body class for global styles
+        document.body.classList.toggle('light-mode', !this.isDarkMode);
+        document.body.classList.toggle('dark-mode', this.isDarkMode);
+      }
+    addFile(): void {
+      const newFileName = `File${this.files.length + 1}.cs`;
+      this.files.push({ fileName: newFileName, code: '' });
+      this.selectedFileIndex = this.files.length - 1;
+      setTimeout(() => {
+        if (this.editor) this.editor.setValue('');
+      });
+    }
 
-  code: string = `using System;
+    removeFile(index: number): void {
+      if (this.files.length <= 1) return;
+      this.files.splice(index, 1);
+      if (this.selectedFileIndex >= this.files.length) {
+        this.selectedFileIndex = this.files.length - 1;
+      }
+      setTimeout(() => {
+        if (this.editor) this.editor.setValue(this.files[this.selectedFileIndex].code);
+      });
+    }
 
-class Program
-{
-    static void Main()
-    {
+    selectFile(index: number): void {
+      this.selectedFileIndex = index;
+      if (this.editor) this.editor.setValue(this.files[index].code);
+    }
+  public files: Array<{ fileName: string; code: string }> = [
+    { fileName: 'Program.cs', code: `using System;
+
+class Program {
+    static void Main() {
         Console.WriteLine("Hello World");
         Console.WriteLine(10 + 20);
     }
-}`;
-
-  output = '';
-  userInput: string = '';
+}` }
+  ];
+  public selectedFileIndex = 0;
+  public output = '';
+  public userInput: string = '';
   private editor: any;
   editorFlex = 1;
   outputFlex = 0.4;
@@ -56,30 +90,26 @@ class Program
     private cd: ChangeDetectorRef,
     private zone:NgZone
   ) {}
-
   runCode() {
-    if(this.editor){
-      this.code = this.editor.getValue();
+    if (this.editor) {
+      this.files[this.selectedFileIndex].code = this.editor.getValue();
     }
-    this.http.post<any>('http://localhost:5143/api/CodeExecution/execute', {
-      code: this.code,
-      input: this.userInput
-    })
-    .pipe(timeout(10000))
-    .subscribe({
-      next: res => {
-        this.zone.run(() => {
-        this.output = res.output;
-        this.cd.detectChanges();
+    this.codeExecutionService.executeCode(this.files, this.userInput)
+      .pipe(timeout(10000))
+      .subscribe({
+        next: res => {
+          this.zone.run(() => {
+            this.output = res.output;
+            this.cd.detectChanges();
+          });
+        },
+        error: err => {
+          this.zone.run(() => {
+            this.output = err.error?.message || 'Execution failed or timed out';
+            this.cd.detectChanges();
+          });
+        }
       });
-      },
-      error: err => {
-        this.zone.run(() => {
-        this.output = err.error?.message || 'Execution failed or timed out';
-        this.cd.detectChanges();
-      });
-      }
-    });
   }
 
   ngAfterViewInit() {
@@ -92,9 +122,9 @@ class Program
         this.editor = monaco.editor.create(
           document.getElementById('monaco-container'),
           {
-            value: this.code,
+            value: this.files[this.selectedFileIndex].code,
             language: 'csharp',
-            theme: 'vs-dark',
+            theme: this.isDarkMode ? 'vs-dark' : 'vs-light',
             automaticLayout: true,
             fontSize: 14,
             minimap: { enabled: false }
@@ -102,7 +132,7 @@ class Program
         );
 
         this.editor.onDidChangeModelContent(() => {
-          this.code = this.editor.getValue();
+          this.files[this.selectedFileIndex].code = this.editor.getValue();
         });
 
         this.initResizableConsole();
@@ -143,7 +173,7 @@ class Program
     });
   }
 
-  startResizing(event: MouseEvent) {
+  startResizing(event: MouseEvent): void {
     this.resizing = true;
     this.startY = event.clientY;
     this.startEditorHeight = this.editorHeight;
@@ -152,7 +182,7 @@ class Program
     document.addEventListener('mouseup', this.stopResizing);
   }
 
-  onResizing = (event: MouseEvent) => {
+  onResizing = (event: MouseEvent): void => {
     if (!this.resizing) return;
     const deltaY = event.clientY - this.startY;
     const newEditorHeight = this.startEditorHeight + deltaY;
@@ -163,18 +193,18 @@ class Program
     }
   };
 
-  stopResizing = () => {
+  stopResizing = (): void => {
     this.resizing = false;
     this.resizingEnabled = false; // Disable further resizing until next double-click
     document.removeEventListener('mousemove', this.onResizing);
     document.removeEventListener('mouseup', this.stopResizing);
   };
 
-  enableResizing() {
+  enableResizing(): void {
     this.resizingEnabled = true;
   }
 
-  maybeStartResizing(event: MouseEvent) {
+  maybeStartResizing(event: MouseEvent): void {
     if (!this.resizingEnabled) return;
     this.startResizing(event);
   }
