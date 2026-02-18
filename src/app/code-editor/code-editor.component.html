@@ -10,16 +10,41 @@
 
   <div class="editor-main">
     <div class="file-tabs">
-      <ng-container *ngFor="let file of files; let i = index">
-        <span class="file-tab" [class.active]="i === selectedFileIndex" (click)="selectFile(i)">
-          <ng-container *ngIf="i === selectedFileIndex; else fileNameDisplay">
-            <input class="file-rename-input" [(ngModel)]="file.fileName" (click)="$event.stopPropagation()" />
-          </ng-container>
-          <ng-template #fileNameDisplay>{{ file.fileName }}</ng-template>
-          <button *ngIf="files.length > 1" class="close-btn" (click)="removeFile(i); $event.stopPropagation();">×</button>
-        </span>
-      </ng-container>
-      <button class="add-file-btn" (click)="addFile()">＋</button>
+      <div
+        *ngFor="let file of files; let i = index"
+        class="file-tab"
+        [class.selected]="i === selectedFileIndex"
+        (click)="selectFile(i)"
+      >
+        <ng-container *ngIf="renamingIndex === i; else fileNameLabel">
+          <input
+            [(ngModel)]="files[i].fileName"
+            (blur)="finishRename(i)"
+            (keydown.enter)="finishRename(i)"
+            class="file-name-input"
+            autofocus
+            (click)="$event.stopPropagation()"
+          />
+        </ng-container>
+        <ng-template #fileNameLabel>
+          <span
+            class="file-name"
+            (dblclick)="startRename(i); $event.stopPropagation()"
+            [title]="file.fileName"
+          >
+            {{ file.fileName }}
+          </span>
+        </ng-template>
+        <button
+          class="close-btn"
+          (click)="removeFile(i); $event.stopPropagation()"
+          [disabled]="files.length <= 1"
+          title="Close file"
+        >
+          &times;
+        </button>
+      </div>
+      <button class="add-btn" (click)="addFile()" title="Add file">+</button>
     </div>
     <div class="editor-container" [style.height.px]="editorHeight">
       <div id="monaco-container"></div>

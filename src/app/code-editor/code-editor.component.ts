@@ -208,4 +208,20 @@ class Program {
     if (!this.resizingEnabled) return;
     this.startResizing(event);
   }
+
+  public renamingIndex: number | null = null;
+
+  startRename(index: number): void {
+    this.renamingIndex = index;
+  }
+
+  finishRename(index: number): void {
+    this.onFileNameBlur(index);
+    this.renamingIndex = null;
+  }
+
+  onFileNameBlur(index: number): void {
+    // Optionally, add logic to validate or update the file name here.
+    // For now, this is a placeholder to resolve the error.
+  }
 }
