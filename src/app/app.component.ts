@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, CodeEditorComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.css']
 })

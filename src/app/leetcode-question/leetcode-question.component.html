@@ -1,0 +1,17 @@
+<div class="leetcode-question-page">
+  <div class="question-header">
+    <h2>{{ question?.title }}</h2>
+    <span class="diff">[{{ question?.difficulty }}]</span>
+  </div>
+  <div class="question-description">
+    <p>{{ question?.description }}</p>
+    <div *ngIf="question?.examples">
+      <b>Example:</b>
+      <div *ngFor="let ex of question.examples">
+        <div><b>Input:</b> {{ex.input}}</div>
+        <div><b>Output:</b> {{ex.output}}</div>
+      </div>
+    </div>
+  </div>
+  <!-- Code editor and submission UI will be added here -->
+</div>

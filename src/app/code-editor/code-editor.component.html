@@ -2,69 +2,144 @@
 
   <div class="editor-header">
     <span class="title">⚡ Online .NET Code Editor</span>
-    <div class ="header-buttons">
+    <div class="header-buttons">
+      <select [(ngModel)]="mode" (change)="setMode(mode)" class="mode-select">
+        <option value="simple">Simple Mode</option>
+        <option value="leetcode">LeetCode Mode</option>
+      </select>
       <button class="mode-btn" (click)="toggleMode()">{{ isDarkMode ? '🌙 Dark' : '☀️ Light' }}</button>
       <button class="run-btn" (click)="runCode()">▶ Run</button>
     </div>
   </div>
 
-  <div class="editor-main">
-    <div class="file-tabs">
-      <div
-        *ngFor="let file of files; let i = index"
-        class="file-tab"
-        [class.selected]="i === selectedFileIndex"
-        (click)="selectFile(i)"
-      >
-        <ng-container *ngIf="renamingIndex === i; else fileNameLabel">
-          <input
-            [(ngModel)]="files[i].fileName"
-            (blur)="finishRename(i)"
-            (keydown.enter)="finishRename(i)"
-            class="file-name-input"
-            autofocus
-            (click)="$event.stopPropagation()"
-          />
-        </ng-container>
-        <ng-template #fileNameLabel>
-          <span
-            class="file-name"
-            (dblclick)="startRename(i); $event.stopPropagation()"
-            [title]="file.fileName"
-          >
-            {{ file.fileName }}
-          </span>
-        </ng-template>
-        <button
-          class="close-btn"
-          (click)="removeFile(i); $event.stopPropagation()"
-          [disabled]="files.length <= 1"
-          title="Close file"
+    <div class="editor-main">
+      <!-- LeetCode Mode: Professional LeetCode-like UI -->
+      <div *ngIf="mode === 'leetcode'" class="leetcode-pro">
+        <div class="leetcode-sidebar" #leetcodeSidebar tabindex="-1">
+          <div class="leetcode-logo">LeetCode</div>
+          <div class="questions-list-pro">
+            <div class="questions-list-header">All Questions</div>
+            <ul class="question-list-ul-pro">
+              <li *ngFor="let q of questions" [class.selected]="selectedQuestion?.id === q.id" (click)="selectQuestion(q)">
+                <span class="qid">{{q.id}}.</span>
+                <span class="qtitle">{{q.title}}</span>
+                <span class="diff" [ngClass]="{
+                  'easy': q.difficulty === 'Easy',
+                  'medium': q.difficulty === 'Medium',
+                  'hard': q.difficulty === 'Hard'
+                }">{{q.difficulty}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Only show the code editor and console if a question is selected -->
+        <div class="leetcode-content" *ngIf="selectedQuestion">
+          <div class="leetcode-desc-code">
+            <div class="leetcode-desc">
+              <div class="desc-header">
+                <span class="desc-title">{{selectedQuestion.title}}</span>
+                <span class="desc-diff" [ngClass]="{
+                  'easy': selectedQuestion.difficulty === 'Easy',
+                  'medium': selectedQuestion.difficulty === 'Medium',
+                  'hard': selectedQuestion.difficulty === 'Hard'
+                }">{{selectedQuestion.difficulty}}</span>
+              </div>
+              <div class="desc-body">
+                <div class="desc-section">
+                  <b>Description</b>
+                  <p>{{selectedQuestion.description}}</p>
+                </div>
+                <!-- Examples/test cases are intentionally hidden from the user. -->
+              </div>
+            </div>
+            <div class="leetcode-code">
+              <!-- Removed duplicate Run button for LeetCode mode -->
+              <div class="editor-container-pro" [style.height.px]="editorHeight">
+                <div id="monaco-container-leetcode"></div>
+              </div>
+              <div class="resizer" (mousedown)="maybeStartResizing($event)" (dblclick)="enableResizing()"></div>
+              <div class="output-container-pro" [style.height.px]="outputHeight">
+                <div class="output-header">Test Cases</div>
+                <ng-container *ngIf="hasRun">
+                  <div *ngIf="testResults && testResults.length > 0">
+                    <div *ngFor="let result of testResults; let i = index" class="test-case-row">
+                      <span class="test-case-index">Test {{i+1}}:</span>
+                      <span [ngClass]="{'test-pass': result.pass, 'test-fail': !result.pass}">
+                        {{ result.pass ? 'Passed' : 'Failed' }}
+                      </span>
+                      <span class="test-case-input">Input: {{ result.input }}</span>
+                      <span class="test-case-expected">Expected: {{ result.expected }}</span>
+                      <span class="test-case-actual">Your Output: {{ result.actual }}</span>
+                    </div>
+                  </div>
+                  <div *ngIf="testResults && testResults.length === 0">
+                    <span>No test cases run yet. (If you just ran code and still see this, check your backend/API connection.)</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- Only show the default editor/console in Simple mode -->
+    <ng-container *ngIf="mode === 'simple'">
+      <div class="file-tabs">
+        <div
+          *ngFor="let file of files; let i = index"
+          class="file-tab"
+          [class.selected]="i === selectedFileIndex"
+          (click)="selectFile(i)"
         >
-          &times;
-        </button>
+          <ng-container *ngIf="renamingIndex === i; else fileNameLabel">
+            <input
+              [(ngModel)]="files[i].fileName"
+              (blur)="finishRename(i)"
+              (keydown.enter)="finishRename(i)"
+              class="file-name-input"
+              autofocus
+              (click)="$event.stopPropagation()"
+            />
+          </ng-container>
+          <ng-template #fileNameLabel>
+            <span
+              class="file-name"
+              (dblclick)="startRename(i); $event.stopPropagation()"
+              [title]="file.fileName"
+            >
+              {{ file.fileName }}
+            </span>
+          </ng-template>
+          <button
+            class="close-btn"
+            (click)="removeFile(i); $event.stopPropagation()"
+            [disabled]="files.length <= 1"
+            title="Close file"
+          >
+            &times;
+          </button>
+        </div>
+        <button class="add-btn" (click)="addFile()" title="Add file">+</button>
       </div>
-      <button class="add-btn" (click)="addFile()" title="Add file">+</button>
-    </div>
-    <div class="editor-container" [style.height.px]="editorHeight">
-      <div id="monaco-container"></div>
-    </div>
-
-    <div class="resizer"
-     (mousedown)="maybeStartResizing($event)"
-     (dblclick)="enableResizing()"></div>
-
-    <div class="output-container" [style.height.px]="outputHeight">
-      <div class="output-header">Console Output</div>
-
-      <div class="input-container">
-        <label>Input:</label>
-        <input
-          [(ngModel)]="userInput"
-          placeholder="Enter input for Console.ReadLine()" />
+      <div class="editor-container" [style.height.px]="editorHeight">
+        <div id="monaco-container-simple"></div>
       </div>
 
-      <pre class="output">{{ output }}</pre>
-    </div>
+      <div class="resizer"
+       (mousedown)="maybeStartResizing($event)"
+       (dblclick)="enableResizing()"></div>
+
+      <div class="output-container" [style.height.px]="outputHeight">
+        <div class="output-header">Console Output</div>
+
+        <div class="input-container">
+          <label>Input:</label>
+          <input
+            [(ngModel)]="userInput"
+            placeholder="Enter input for Console.ReadLine()" />
+        </div>
+
+        <pre class="output">{{ output }}</pre>
+      </div>
+    </ng-container>
   </div>
 </div>

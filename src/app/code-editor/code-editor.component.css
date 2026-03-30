@@ -1,3 +1,308 @@
+/* LeetCode Professional UI Styles */
+.leetcode-pro {
+  display: flex;
+  height: 90vh;
+  background: #18181a;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px #0004;
+  overflow: hidden;
+}
+.leetcode-logo {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffa116;
+  margin: 24px 0 16px 0;
+  text-align: center;
+  letter-spacing: 2px;
+}
+.leetcode-sidebar {
+  width: 320px;
+  background: #222226;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #23272e;
+  min-width: 260px;
+  max-width: 340px;
+  height: 100%;
+}
+.questions-list-pro {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 16px 0;
+}
+.questions-list-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 8px 20px 8px 20px;
+  border-bottom: 1px solid #333;
+  background: #23272e;
+}
+.question-list-ul-pro {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.question-list-ul-pro li {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #23272e;
+  cursor: pointer;
+  transition: background 0.15s;
+  color: #e2e2e2;
+}
+.question-list-ul-pro li.selected, .question-list-ul-pro li:hover {
+  background: #282828;
+  color: #fff;
+}
+.question-list-ul-pro .qid {
+  font-weight: 600;
+  margin-right: 8px;
+  color: #ffa116;
+}
+.question-list-ul-pro .qtitle {
+  flex: 1;
+  font-size: 1rem;
+}
+.question-list-ul-pro .diff {
+  font-size: 0.95em;
+  font-weight: 600;
+  margin-left: 10px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+.question-list-ul-pro .diff.easy, .desc-diff.easy { background: #e6f4ea; color: #2ecc71; }
+.question-list-ul-pro .diff.medium, .desc-diff.medium { background: #fdf6e3; color: #f4b400; }
+.question-list-ul-pro .diff.hard, .desc-diff.hard { background: #fbeaea; color: #ff2d55; }
+
+.leetcode-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #18181a;
+  height: 100%;
+}
+.leetcode-desc-code {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  gap: 0;
+}
+.leetcode-desc {
+  width: 40%;
+  min-width: 340px;
+  max-width: 500px;
+  background: #23272e;
+  color: #fff;
+  padding: 32px 32px 24px 32px;
+  border-right: 1px solid #23272e;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.desc-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.desc-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  flex: 1;
+}
+.desc-diff {
+  font-size: 0.95em;
+  font-weight: 600;
+  margin-left: 10px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+.desc-section {
+  margin-bottom: 18px;
+}
+.example-block {
+  background: #18181a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 0.98em;
+}
+.example-input, .example-output {
+  color: #ffa116;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+}
+.leetcode-code {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #18181a;
+  padding: 0 0 0 0;
+  min-width: 0;
+}
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 8px 24px;
+  background: #18181a;
+  border-bottom: 1px solid #23272e;
+}
+.editor-toolbar .run-btn {
+  background: #ffa116;
+  color: #18181a;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 18px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.editor-toolbar .run-btn:hover {
+  background: #ffb84d;
+}
+.editor-toolbar .mode-btn {
+  background: #23272e;
+  color: #ffa116;
+  border: 1px solid #ffa116;
+  border-radius: 5px;
+  padding: 6px 14px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+.editor-toolbar .mode-btn:hover {
+  background: #ffa116;
+  color: #23272e;
+}
+.editor-toolbar .input-box {
+  flex: 1;
+  margin-left: 16px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #23272e;
+  color: #fff;
+  font-size: 1rem;
+}
+.editor-container-pro {
+  background: #23272e;
+  border-bottom: 1px solid #23272e;
+  border-radius: 12px 12px 0 0;
+  margin: 0 24px;
+  height: 350px;
+  max-height: 350px;
+  min-height: 350px;
+  box-shadow: 0 4px 24px #0002;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#monaco-container-leetcode {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.output-container-pro {
+  background: #18181a;
+  color: #fff;
+  padding: 12px 24px;
+  border-top: 1px solid #23272e;
+  font-size: 1.05em;
+  min-height: 60px;
+  max-height: 180px;
+  overflow-y: auto;
+  border-radius: 0 0 8px 8px;
+  margin: 0 24px 24px 24px;
+}
+.output-header {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #ffa116;
+}
+/* Layout for LeetCode question and editor side by side */
+.leetcode-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  width: 100%;
+}
+.leetcode-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.arrow {
+  margin-left: auto;
+  color: #7ecfff;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+/* LeetCode questions list styling */
+.leetcode-questions {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.questions-list {
+  min-width: 260px;
+  max-width: 320px;
+  background: #23272e;
+  border-radius: 8px;
+  padding: 12px 8px 12px 12px;
+  box-shadow: 0 2px 8px #0002;
+  height: 400px;
+  overflow-y: auto;
+}
+.question-list-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 340px;
+  overflow-y: auto;
+}
+.question-list-ul li {
+  padding: 8px 6px;
+  margin-bottom: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+}
+.question-list-ul li.selected, .question-list-ul li:hover {
+  background: #3a3f4b;
+  color: #fff;
+}
+.qid {
+  font-weight: bold;
+  margin-right: 6px;
+}
+.qtitle {
+  flex: 1;
+}
+.diff {
+  font-size: 0.9em;
+  color: #b3b3b3;
+  margin-left: 8px;
+}
+.question-detail {
+  flex: 1;
+  background: #23272e;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px #0002;
+  min-width: 300px;
+  max-width: 600px;
+}
 body.light-mode {
   background: #f3f4f6 !important;
   color: #222 !important;
@@ -344,15 +649,28 @@ body.light-mode {
   min-height: 0;
 }
 
+
+
 .editor-container {
-  background: #3f3e3e;
-  padding: 8px;
+  background: #23272e;
+  padding: 0 24px 0 24px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 4px 24px #0002;
   overflow: hidden;
   transition: height 0.1s;
-  flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  height: 350px;
+  max-height: 350px;
+  border-bottom: 1px solid #23272e;
+}
+
+#monaco-container-simple {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 #monaco-container {
@@ -374,12 +692,15 @@ body.light-mode {
 
 /* OUTPUT */
 .output-container {
-  background: #020617;
+  background: #18181a;
+  color: #fff;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid #333;
-  padding: 0;
-  overflow: auto;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 24px #0002;
+  border-top: 1px solid #23272e;
+  padding: 0 24px 0 24px;
+  overflow: hidden;
   transition: height 0.1s;
   min-height: 0;
   flex: 0 0 auto;
@@ -387,18 +708,20 @@ body.light-mode {
 }
 
 .output-header {
-  padding: 8px 12px;
-  font-size: 13px;
-  background: #3a3b3c;
-  border-bottom: 1px solid #1f2937;
-  color: #93c5fd;
+  padding: 10px 0 6px 0;
+  font-size: 14px;
+  background: transparent;
+  border-bottom: 1px solid #23272e;
+  color: #ffa116;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 /* INPUT */
 .input-container {
   display: flex;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 10px 0 0 0;
 }
 
 .input-container input {
@@ -413,11 +736,15 @@ body.light-mode {
 /* OUTPUT TEXT */
 .output {
   flex: 1;
-  padding: 12px;
+  padding: 10px 0 10px 0;
   overflow: auto;
   white-space: pre-wrap;
-  font-size: 13px;
+  font-size: 14px;
   margin: 0;
+  color: #e5e7eb;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .monaco-editor {

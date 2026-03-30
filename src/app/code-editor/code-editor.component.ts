@@ -1,4 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Inject, PLATFORM_ID, ApplicationRef, ViewChild, ElementRef } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -17,9 +19,68 @@ declare const monaco: any;
   styleUrls: ['./code-editor.component.css']
 })
 export class CodeEditorComponent implements AfterViewInit {
-      public isDarkMode = true;
+  @ViewChild('leetcodeSidebar') leetcodeSidebar!: ElementRef;
+  public hasRun: boolean = false;
+  // Test case results for LeetCode mode
+  public testResults: Array<{input: string, expected: string, actual: string, pass: boolean}> = [];
+  // LeetCode mode state
+  questions: any[] = [];
+  selectedQuestion: any = null;
+  public isDarkMode = true;
+  public mode: 'simple' | 'leetcode' = 'simple';
+
+      setMode(newMode: 'simple' | 'leetcode') {
+        this.mode = newMode;
+        this.cd.detectChanges();
+        this.appRef.tick();
+        if (newMode === 'leetcode') {
+          if (this.questions.length === 0) {
+            this.loadQuestions();
+          }
+          this.selectedQuestion = null;
+          setTimeout(() => {
+            if (this.leetcodeSidebar) {
+              this.leetcodeSidebar.nativeElement.focus();
+            }
+          }, 100);
+        }
+        setTimeout(() => this.initOrUpdateMonaco(true), 50);
+      }
+
+      loadQuestions() {
+        this.codeExecutionService.getQuestions().subscribe({
+          next: (qs) => {
+            this.zone.run(() => {
+              this.questions = qs;
+              this.cd.detectChanges();
+              setTimeout(() => {
+                this.cd.detectChanges();
+                if (this.leetcodeSidebar) {
+                  this.leetcodeSidebar.nativeElement.focus();
+                }
+              }, 0);
+            });
+          },
+          error: () => {
+            this.zone.run(() => {
+              this.questions = [];
+              this.selectedQuestion = null;
+              this.cd.detectChanges();
+            });
+          }
+        });
+      }
+
+      selectQuestion(q: any) {
+        this.selectedQuestion = q;
+        this.testResults = [];
+        this.hasRun = false;
+        setTimeout(() => this.initOrUpdateMonaco(true), 50);
+      }
       toggleMode(): void {
         this.isDarkMode = !this.isDarkMode;
+        this.testResults = [];
+        this.hasRun = false;
         const theme = this.isDarkMode ? 'vs-dark' : 'vs-light';
         if (this.editor) {
           monaco.editor.setTheme(theme);
@@ -27,7 +88,9 @@ export class CodeEditorComponent implements AfterViewInit {
         // Change body class for global styles
         document.body.classList.toggle('light-mode', !this.isDarkMode);
         document.body.classList.toggle('dark-mode', this.isDarkMode);
+        setTimeout(() => this.initOrUpdateMonaco(true), 50);
       }
+      // ...existing code...
     addFile(): void {
       const newFileName = `File${this.files.length + 1}.cs`;
       this.files.push({ fileName: newFileName, code: '' });
@@ -88,64 +151,139 @@ class Program {
     private codeExecutionService: CodeExecutionService,
     private http: HttpClient,
     private cd: ChangeDetectorRef,
-    private zone:NgZone
+    private zone:NgZone,
+    private router: Router,
+    private appRef: ApplicationRef,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
   runCode() {
     if (this.editor) {
       this.files[this.selectedFileIndex].code = this.editor.getValue();
     }
-    this.codeExecutionService.executeCode(this.files, this.userInput)
-      .pipe(timeout(10000))
-      .subscribe({
-        next: res => {
-          this.zone.run(() => {
-            this.output = res.output;
-            this.cd.detectChanges();
+    if (this.mode === 'leetcode' && this.selectedQuestion && this.selectedQuestion.examples) {
+      this.testResults = [];
+      this.hasRun = true;
+      const examples = this.selectedQuestion.examples;
+      let completed = 0;
+      for (const ex of examples) {
+        this.codeExecutionService.executeCode(this.files, ex.input)
+          .pipe(timeout(10000))
+          .subscribe({
+            next: res => {
+              const actual = (res.output || '').trim();
+              const expected = (ex.output || '').trim();
+              const pass = actual === expected;
+              this.zone.run(() => {
+                this.testResults.push({
+                  input: ex.input,
+                  expected: expected,
+                  actual: actual,
+                  pass: pass
+                });
+                completed++;
+                if (completed === examples.length) {
+                  this.cd.detectChanges();
+                }
+              });
+            },
+            error: err => {
+              this.zone.run(() => {
+                this.testResults.push({
+                  input: ex.input,
+                  expected: ex.output,
+                  actual: err.error?.message || 'Execution failed or timed out',
+                  pass: false
+                });
+                completed++;
+                if (completed === examples.length) {
+                  this.cd.detectChanges();
+                }
+              });
+            }
           });
-        },
-        error: err => {
-          this.zone.run(() => {
-            this.output = err.error?.message || 'Execution failed or timed out';
-            this.cd.detectChanges();
-          });
-        }
-      });
+      }
+    } else {
+      // Simple mode: just run and show output
+      this.codeExecutionService.executeCode(this.files, this.userInput)
+        .pipe(timeout(10000))
+        .subscribe({
+          next: res => {
+            this.zone.run(() => {
+              this.output = res.output;
+              this.cd.detectChanges();
+            });
+          },
+          error: err => {
+            this.zone.run(() => {
+              this.output = err.error?.message || 'Execution failed or timed out';
+              this.cd.detectChanges();
+            });
+          }
+        });
+    }
   }
 
   ngAfterViewInit() {
-    const initMonaco = () => {
-      (window as any).require.config({
-        paths: { vs: 'assets/monaco-editor/min/vs' }
-      });
+    this.initOrUpdateMonaco(false);
+  }
 
-      (window as any).require(['vs/editor/editor.main'], () => {
-        this.editor = monaco.editor.create(
-          document.getElementById('monaco-container'),
-          {
-            value: this.files[this.selectedFileIndex].code,
-            language: 'csharp',
-            theme: this.isDarkMode ? 'vs-dark' : 'vs-light',
-            automaticLayout: true,
-            fontSize: 14,
-            minimap: { enabled: false }
-          }
-        );
-
-        this.editor.onDidChangeModelContent(() => {
-          this.files[this.selectedFileIndex].code = this.editor.getValue();
+  /**
+   * Initialize or update Monaco editor. If forceLayout is true, will call layout and focus after creation.
+   */
+  initOrUpdateMonaco(forceLayout: boolean = false) {
+    if (isPlatformBrowser(this.platformId)) {
+      const initMonaco = () => {
+        (window as any).require.config({
+          paths: { vs: 'assets/monaco-editor/min/vs' }
         });
 
-        this.initResizableConsole();
-      });
-    };
+        (window as any).require(['vs/editor/editor.main'], () => {
+          // Use the correct container based on mode
+          let containerId = this.mode === 'leetcode' ? 'monaco-container-leetcode' : 'monaco-container-simple';
+          const container = document.getElementById(containerId);
+          if (!container) return;
+          // Dispose previous editor if exists
+          if (this.editor) {
+            this.editor.dispose();
+          }
+          this.editor = monaco.editor.create(
+            container,
+            {
+              value: this.files[this.selectedFileIndex].code,
+              language: 'csharp',
+              theme: this.isDarkMode ? 'vs-dark' : 'vs-light',
+              automaticLayout: true,
+              fontSize: 14,
+              minimap: { enabled: false }
+            }
+          );
 
-    if (!(window as any).require) {
-      const loaderScript = document.createElement('script');
-      loaderScript.src = 'assets/monaco-editor/min/vs/loader.js';
-      loaderScript.onload = initMonaco;
-      document.body.appendChild(loaderScript);
-    } else {
-      initMonaco();
+          this.editor.onDidChangeModelContent(() => {
+            this.files[this.selectedFileIndex].code = this.editor.getValue();
+          });
+
+          // Focus and layout the editor to ensure cursor appears
+          if (forceLayout) {
+            setTimeout(() => {
+              this.editor.layout();
+              this.editor.focus();
+            }, 10);
+          } else {
+            this.editor.focus();
+          }
+
+          this.initResizableConsole();
+        });
+      };
+
+      if (!(window as any).require) {
+        const loaderScript = document.createElement('script');
+        loaderScript.src = 'assets/monaco-editor/min/vs/loader.js';
+        loaderScript.onload = initMonaco;
+        document.body.appendChild(loaderScript);
+      } else {
+        initMonaco();
+      }
     }
   }
 
@@ -223,5 +361,23 @@ class Program {
   onFileNameBlur(index: number): void {
     // Optionally, add logic to validate or update the file name here.
     // For now, this is a placeholder to resolve the error.
+  }
+
+  // Example method to run bracket validation test cases
+  runBracketValidationTests(): void {
+    const testCases = [
+      { input: '(]', expected: false },
+      { input: '()[]{}', expected: true },
+      { input: '((()))', expected: true },
+      { input: '([)]', expected: false },
+      { input: '{[]}', expected: true }
+    ];
+
+    testCases.forEach(tc => {
+      this.codeExecutionService.getFromApi<boolean>('BracketValidation/isvalid', { s: tc.input })
+        .subscribe(result => {
+          console.log(`Input: ${tc.input}, Expected: ${tc.expected}, Got: ${result}`);
+        });
+    });
   }
 }
